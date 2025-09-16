@@ -1,6 +1,12 @@
 import locators from '../support/locators';
 
 class HomePage {
+
+  // Aceita termos 
+  acceptTerms() {
+    cy.get(locators.HOME_PAGE.ACCEPT_TERMS).click({ force: true });
+  }
+
   // Pesquisa produto
   searchProduct(product) {
     cy.get('.search-form input[type="text"]')
@@ -9,10 +15,6 @@ class HomePage {
       .type(product + '{enter}');
   }
 
-  // Aceita termos 
-  acceptTerms() {
-    cy.get(locators.HOME_PAGE.ACCEPT_TERMS).click({ force: true });
-  }
 }
 
 export default new HomePage();

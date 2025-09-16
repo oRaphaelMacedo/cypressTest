@@ -30,11 +30,8 @@ jobs:
       # 4) Roda Cypress em modo headless
       - name: Run Cypress tests
         env:
-          # Variáveis de ambiente usadas nos testes
+          # Variáveis de ambiente
           CYPRESS_marketplace: "https://pt.webuy.com"
-
-          # ⚠️ Estes dois devem ser criados como "Secrets" no GitHub
-          # (Settings → Secrets and variables → Actions → New repository secret)
           CYPRESS_TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
           CYPRESS_TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
         run: npm test
