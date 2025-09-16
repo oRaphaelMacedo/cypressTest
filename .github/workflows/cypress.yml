@@ -1,0 +1,58 @@
+name: Cypress Tests
+
+on:
+  push:
+    branches: [ main ]        # roda quando fizer push na main
+  pull_request:
+    branches: [ main ]        # roda quando abrir PR para main
+  workflow_dispatch:          # permite rodar manualmente na aba Actions
+
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1) Baixa o código do repositório
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2) Configura Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      # 3) Instala dependências do projeto
+      - name: Install dependencies
+        run: npm ci
+
+      # 4) Roda Cypress em modo headless
+      - name: Run Cypress tests
+        env:
+          # Variáveis de ambiente usadas nos testes
+          CYPRESS_marketplace: "https://pt.webuy.com"
+
+          # ⚠️ Estes dois devem ser criados como "Secrets" no GitHub
+          # (Settings → Secrets and variables → Actions → New repository secret)
+          CYPRESS_TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
+          CYPRESS_TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+        run: npm test
+
+      # 5) Faz upload de screenshots em caso de falha
+      - name: Upload screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots
+          if-no-files-found: ignore
+
+      # 6) Faz upload de vídeos sempre (útil para debugging)
+      - name: Upload videos
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-videos
+          path: cypress/videos
+          if-no-files-found: ignore
